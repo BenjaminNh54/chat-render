@@ -2,57 +2,52 @@ const http = require("http");
 const WebSocket = require("ws");
 const fs = require("fs");
 
-// Création d'un serveur HTTP basique
+// Créer le serveur HTTP simple
 const server = http.createServer((req, res) => {
   res.writeHead(200);
-  res.end("Serveur de chat en ligne via Render");
+  res.end("Serveur Chat Local en ligne");
 });
 
-// Création du serveur WebSocket lié au serveur HTTP
+// Créer le serveur WebSocket
 const wss = new WebSocket.Server({ server });
 
-// Chargement des messages depuis un fichier
+// Historique des messages
 let messages = [];
 try {
-  messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
-} catch {
+  messages = JSON.parse(fs.readFileSync('messages.json', 'utf8'));
+} catch (e) {
   messages = [];
 }
 
+// Gestion des connexions
 wss.on("connection", (ws) => {
-  console.log("Nouvelle connexion WebSocket");
+  console.log("Un utilisateur s'est connecté");
 
-  // Envoi de l'historique des messages au nouveau client
-  messages.forEach((msg) => {
-    ws.send(JSON.stringify(msg));
-  });
+  // Envoyer l'historique au nouvel utilisateur
+  messages.forEach((msg) => ws.send(JSON.stringify(msg)));
 
-  // Réception des messages
   ws.on("message", (message) => {
     try {
       const msgObj = JSON.parse(message.toString());
       messages.push(msgObj);
 
-      // Sauvegarde dans un fichier
-      fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
+      // Sauvegarder l'historique
+      fs.writeFileSync('messages.json', JSON.stringify(messages, null, 2));
 
-      // Diffusion à tous les clients
+      // Diffuser à tous les clients
       wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(msgObj));
-        }
+        if (client.readyState === WebSocket.OPEN) client.send(JSON.stringify(msgObj));
       });
-    } catch (err) {
-      console.error("Erreur de traitement du message :", err);
+    } catch (e) {
+      console.error("Erreur parsing message:", e);
     }
   });
 
-  ws.on("close", () => {
-    console.log("Client déconnecté");
-  });
+  ws.on("close", () => console.log("Un utilisateur s'est déconnecté"));
 });
 
-// Render fournit automatiquement HTTPS et WSS sur son domaine
-server.listen(process.env.PORT || 8080, () => {
-  console.log(`Serveur WebSocket lancé sur le port ${process.env.PORT || 8080}`);
+// Render fournit le port via process.env.PORT
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
