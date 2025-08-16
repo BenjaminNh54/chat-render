@@ -5,8 +5,14 @@ const http = require("http");
 // Création du serveur HTTP (obligatoire pour Render)
 const server = http.createServer((req, res) => {
   if (req.url === "/list-msg") {
-    messages = JSON.parse(fs.readFileSync("messages.json", "utf8"))
-    res.end(messages);
+    try {
+      messages = JSON.parse(fs.readFileSync("messages.json", "utf8"))
+      res.end(messages);
+      
+    } catch (error) {
+      res.writeHead(500);
+      res.end("Erreur : " + error);
+    }
   } 
 });
 const wss = new WebSocket.Server({ server });
