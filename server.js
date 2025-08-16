@@ -48,7 +48,7 @@ wss.on("connection", (ws) => {
 });
 
 // Toutes les 10 secondes : vider le chat puis renvoyer tous les messages
-setInterval(() => {
+/*setInterval(() => {
   try {
     messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
   } catch {
@@ -72,7 +72,7 @@ setInterval(() => {
       });
     });
   }, 100); // petit délai pour que le client ait vidé son chat
-}, 10000);
+}, 10000);*/
 
 // Ping toutes les 5 min pour éviter la mise en veille de Render
 setInterval(() => {
