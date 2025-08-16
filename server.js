@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
   if (req.url === "/list-msg") {
     try {
       messages = JSON.parse(fs.readFileSync("messages.json", "utf8"))
-      res.json(messages);
+      res.end(JSON.stringify(messages));
 
     } catch (error) {
       res.writeHead(500);
