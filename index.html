@@ -5,32 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Chat Local</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; background: #f4f4f4; }
-  #chat { flex: 1; border: 1px solid #ccc; background: white; overflow-y: auto; padding: 10px; margin: 10px; }
+  html{ height: calc(100% - 10px); box-sizing: border-box;}
+  body { font-family: Arial, sans-serif; padding: 200px; width: 300px; background: #f4f4f4; 
+	display: flex;    flex-direction: column;    align-items: stretch;    height: 100%;    width: 100%;    overflow: hidden;padding: 0;
+}
+  #chat { border: 1px solid #ccc; background: white; height: 200px; overflow-y: auto; padding: 5px; margin-bottom: 10px; flex-grow: 1; margin-right: 15px; }
   input, button { padding: 5px; margin: 2px 4px 2px 0; }
   #pseudo { width: 50%; }
   #msg { width: 70%; }
-  .message-expediteur { color: #40E0D0; font-weight: bold; }
-  .message-date { font-size: 0.8em; color: #888; margin-left: 5px; }
+  .message-expediteur {
+    color: #40E0D0;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
-<h3 style="margin:10px;">💬 Chat Local</h3>
+<h3>💬 Chat Local</h3>
 
-<div style="margin:10px;">
+<div>
   <input type="text" id="pseudo" placeholder="Pseudo" />
   <button id="setPseudo">OK</button>
-  <button id="editPseudo" disabled>Modifier</button>
 </div>
 
 <div id="chat"></div>
 
-<div style="margin:10px;">
+<div>
   <input type="text" id="msg" placeholder="Votre message" />
   <button id="send">Envoyer</button>
 </div>
 
-<script src="script.js"></script>
+<script src="popup.js"></script>
 </body>
 </html>
