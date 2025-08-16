@@ -13,7 +13,6 @@ const sendBtn = document.getElementById('send');
 pseudoInput.value = pseudo;
 pseudoInput.disabled = !!pseudo;
 setPseudoBtn.disabled = !!pseudo;
-editPseudoBtn.disabled = !pseudo;
 
 let ws;
 let reconnectTimeout;
@@ -58,7 +57,6 @@ setPseudoBtn.onclick = () => {
   localStorage.setItem('pseudo', pseudo);
   pseudoInput.disabled = true;
   setPseudoBtn.disabled = true;
-  editPseudoBtn.disabled = false;
 };
 
 editPseudoBtn.onclick = () => {
