@@ -84,13 +84,16 @@ msgInput.addEventListener('keydown', (e) => {
 });
 
 function addMessage(msg) {
-  // Créer un objet Date à partir du timestamp si il existe, sinon maintenant
   const date = msg.created_at ? new Date(msg.created_at) : new Date();
+
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = String(date.getFullYear()).slice(-2); // deux chiffres
+  const year = String(date.getFullYear()).slice(-2);
 
-  const formattedDate = `${day}/${month}/${year}`;
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
 
   const div = document.createElement('div');
   div.innerHTML = `<strong>${escapeHTML(msg.pseudo)} :</strong> ${escapeHTML(msg.text)} <span style="color:gray;font-size:0.8em;">(${formattedDate})</span>`;
@@ -102,6 +105,7 @@ function addMessage(msg) {
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 
 // Petite fonction pour éviter injection HTML dans le chat
