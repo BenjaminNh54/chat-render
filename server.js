@@ -1,11 +1,10 @@
-// server.js
 const { createClient } = require('@supabase/supabase-js');
 const WebSocket = require('ws');
 const http = require('http');
 
 // ===== CONFIG SUPABASE =====
 const supabaseUrl = 'https://osqzuptinfbahmfncjgl.supabase.co';
-const supabaseKey = 'sb_secret_b4tZZmSvmT-vze7BvvNzhQ_zJFULUxt'; // Remplace par ta clé anonyme
+const supabaseKey = 'sb_secret_b4tZZmSvmT-vze7BvvNzhQ_zJFULUxt';
 const supabase = createClient(supabaseUrl, supabaseKey);
 // ===========================
 
@@ -39,7 +38,7 @@ wss.on('connection', async (ws) => {
   // Envoyer l'historique au nouvel utilisateur
   const messages = await getAllMessages();
   messages.forEach(msg => {
-    ws.send(JSON.stringify({ pseudo: msg.user, text: msg.message }));
+    ws.send(JSON.stringify({ pseudo: msg.user, text: msg.message, created_at: msg.created_at }));
   });
 
   // Réception d'un nouveau message
@@ -50,14 +49,15 @@ wss.on('connection', async (ws) => {
       // Sauvegarder dans Supabase
       const { data, error } = await supabase
         .from('messages')
-        .insert([{ user: msgObj.pseudo, message: msgObj.text }]);
+        .insert([{ user: msgObj.pseudo, message: msgObj.text }])
+        .select();
 
       if (error) {
         console.error('Erreur insertion message:', error);
         return;
       }
 
-            // Ajouter la date exacte renvoyée par Supabase
+      // Ajouter la date exacte renvoyée par Supabase
       const fullMsg = {
         pseudo: data[0].user,
         text: data[0].message,
@@ -67,7 +67,7 @@ wss.on('connection', async (ws) => {
       // Diffuser à tous les clients
       wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(msgObj));
+          client.send(JSON.stringify(fullMsg));
         }
       });
 
