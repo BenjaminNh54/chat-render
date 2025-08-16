@@ -33,6 +33,7 @@ wss.on("connection", (ws) => {
 
     // Sauvegarde dans le fichier
     fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
+    messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
 
     // Diffusion à tous
     wss.clients.forEach((client) => {
