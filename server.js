@@ -13,7 +13,10 @@ const server = http.createServer((req, res) => {
       res.writeHead(500);
       res.end("Erreur : " + error);
     }
-  } 
+  } else {
+    res.writeHead(200);
+    res.end("Serveur de chat Render");
+  }
 });
 const wss = new WebSocket.Server({ server });
 
