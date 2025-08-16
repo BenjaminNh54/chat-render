@@ -1,82 +1,86 @@
-// server.js
+const WebSocket = require("ws");
 const fs = require("fs");
 const http = require("http");
-const WebSocket = require("ws");
 
-const PORT = process.env.PORT || 8080;
-const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
-const MESSAGES_FILE = "messages.json";
-
-// Création du fichier s'il n'existe pas
-if (!fs.existsSync(MESSAGES_FILE)) {
-    fs.writeFileSync(MESSAGES_FILE, "[]");
-}
-
-// Lire les messages
-function readMessages() {
-    try {
-        return JSON.parse(fs.readFileSync(MESSAGES_FILE, "utf8"));
-    } catch {
-        return [];
-    }
-}
-
-// Sauvegarder les messages
-function saveMessages(messages) {
-    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
-}
-
-const server = http.createServer((req, res) => {
-    res.writeHead(200);
-    res.end("Serveur WebSocket actif.");
-});
-
+// Création du serveur HTTP (obligatoire pour Render)
+const server = http.createServer();
 const wss = new WebSocket.Server({ server });
 
-// Connexion WebSocket
+// Historique des messages
+let messages = [];
+try {
+  messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
+} catch {
+  messages = [];
+}
+
+// Quand un client se connecte
 wss.on("connection", (ws) => {
-    console.log("Client connecté");
+  console.log("Nouvelle connexion WebSocket");
 
-    // Envoyer l'historique au nouveau client
-    ws.send(JSON.stringify({ type: "history", messages: readMessages() }));
+  // Envoie des messages actuels
+  messages.forEach((msg) => {
+    ws.send(msg.text);
+  });
 
-    // Réception message
-    ws.on("message", (message) => {
-        let messages = readMessages();
-        messages.push({ text: message.toString(), date: Date.now() });
-        saveMessages(messages);
+  // Réception d'un message
+  ws.on("message", (message) => {
+    const msgObj = {
+      text: message.toString(),
+      date: Date.now(),
+    };
+    messages.push(msgObj);
 
-        // Diffuser à tous
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ type: "message", text: message.toString(), date: Date.now() }));
-            }
-        });
+    // Sauvegarde dans le fichier
+    fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
+
+    // Diffusion à tous
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(msgObj.text);
+      }
     });
+  });
 
-    ws.on("close", () => console.log("Client déconnecté"));
+  ws.on("close", () => {
+    console.log("Client déconnecté");
+  });
 });
 
-// Toutes les 10 sec → renvoyer l'historique complet
+// Toutes les 10 secondes : vider le chat puis renvoyer tous les messages
 setInterval(() => {
-    const messages = readMessages();
-    wss.clients.forEach((client) => {
+  try {
+    messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
+  } catch {
+    messages = [];
+  }
+
+  // Envoyer un signal "clear" pour vider le chat
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send("__CLEAR_CHAT__");
+    }
+  });
+
+  // Puis renvoyer chaque message un par un
+  setTimeout(() => {
+    messages.forEach((msg) => {
+      wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: "history", messages }));
+          client.send(msg.text);
         }
+      });
     });
+  }, 100); // petit délai pour que le client ait vidé son chat
 }, 10000);
 
-// Toutes les 5 min → requête vers soi-même (keep-alive)
+// Ping toutes les 5 min pour éviter la mise en veille de Render
 setInterval(() => {
-    http.get(SERVER_URL, (res) => {
-        console.log("Ping keep-alive :", res.statusCode);
-    }).on("error", (err) => {
-        console.error("Erreur ping keep-alive :", err.message);
-    });
-}, 5 * 60 * 1000); // 5 minutes
+  http.get(`http://localhost:${process.env.PORT || 8080}`);
+}, 5 * 60 * 1000);
 
+// Lancement du serveur
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
-    console.log(`Ping vers : ${SERVER_URL}`);
+  console.log(`Serveur lancé sur le port ${PORT}`);
 });
