@@ -3,7 +3,12 @@ const fs = require("fs");
 const http = require("http");
 
 // Création du serveur HTTP (obligatoire pour Render)
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+  if (req.url === "/list-msg") {
+    messages = JSON.parse(fs.readFileSync("messages.json", "utf8"))
+    res.end(messages);
+  } 
+});
 const wss = new WebSocket.Server({ server });
 
 // Historique des messages
@@ -33,7 +38,6 @@ wss.on("connection", (ws) => {
 
     // Sauvegarde dans le fichier
     fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
-    messages = JSON.parse(fs.readFileSync("messages.json", "utf8"));
 
     // Diffusion à tous
     wss.clients.forEach((client) => {
