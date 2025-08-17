@@ -7,9 +7,15 @@ let pseudo = localStorage.getItem('pseudo') || '';
 const pseudoInput = document.getElementById('pseudo');
 const setPseudoBtn = document.getElementById('setPseudo');
 const editPseudoBtn = document.getElementById('editPseudo');
+const pseudoContainer = document.getElementById('pseudo-container'); // div parent du pseudo et bouton
 const chatBox = document.getElementById('chat');
 const msgInput = document.getElementById('msg');
 const sendBtn = document.getElementById('send');
+
+// Si l'utilisateur a déjà un pseudo, masquer complètement le champ et le bouton OK
+if (pseudo) {
+  pseudoContainer.style.display = 'none';
+}
 
 pseudoInput.value = pseudo;
 pseudoInput.disabled = !!pseudo;
@@ -56,6 +62,8 @@ setPseudoBtn.onclick = () => {
   pseudoInput.disabled = true;
   setPseudoBtn.disabled = true;
   editPseudoBtn.disabled = false;
+  // Masquer le champ et le bouton OK après avoir choisi le pseudo
+  pseudoContainer.style.display = 'none';
 };
 
 editPseudoBtn.onclick = () => {

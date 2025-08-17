@@ -31,7 +31,7 @@
     flex-grow: 1; 
     margin-right: 15px; 
     font-size: 14px;
-    color: #85e2d9
+    color: #85e2d9;
   }
   input, button { 
     padding: 5px; 
@@ -58,10 +58,10 @@
 
 <h3>💬 Chat Local</h3>
 
-<div>
+<div id="pseudo-container">
   <input type="text" id="pseudo" placeholder="Pseudo" />
   <button id="setPseudo">OK</button>
-  <button id="editPseudo" disabled>Modifier</button>
+  <button id="editPseudo" style="display: none;">Modifier</button>
 </div>
 
 <div id="chat"></div>
@@ -70,6 +70,15 @@
   <input type="text" id="msg" placeholder="Votre message" />
   <button id="send">Envoyer</button>
 </div>
+
+<script>
+  // Masquer le champ et le bouton pseudo si l'utilisateur a déjà un pseudo
+  const pseudoContainer = document.getElementById('pseudo-container');
+  const pseudo = localStorage.getItem('pseudo') || '';
+  if (pseudo) {
+    pseudoContainer.style.display = 'none';
+  }
+</script>
 
 <script src="popup.js"></script>
 </body>
