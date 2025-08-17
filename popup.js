@@ -4,27 +4,28 @@ const SERVER_PORT = 443;                    // WSS par défaut pour HTTPS
 // =========================
 
 let pseudo = localStorage.getItem('pseudo') || '';
+const pseudoContainer = document.getElementById('pseudo-container');
 const pseudoInput = document.getElementById('pseudo');
 const setPseudoBtn = document.getElementById('setPseudo');
 const editPseudoBtn = document.getElementById('editPseudo');
-const pseudoContainer = document.getElementById('pseudo-container'); // div parent du pseudo et bouton
 const chatBox = document.getElementById('chat');
 const msgInput = document.getElementById('msg');
 const sendBtn = document.getElementById('send');
-
-// Si l'utilisateur a déjà un pseudo, masquer complètement le champ et le bouton OK
-if (pseudo) {
-  pseudoContainer.style.display = 'none';
-}
 
 pseudoInput.value = pseudo;
 pseudoInput.disabled = !!pseudo;
 setPseudoBtn.disabled = !!pseudo;
 editPseudoBtn.disabled = !pseudo;
 
+// Si l'utilisateur a déjà un pseudo, masquer le champ pseudo
+if(pseudo) {
+  pseudoContainer.style.display = 'none';
+}
+
 let ws;
 let reconnectTimeout;
 
+// Connexion WebSocket
 function connectWS() {
   const wsUrl = `wss://${SERVER_IP}`;
   try {
@@ -56,13 +57,10 @@ function connectWS() {
 
 connectWS();
 
+// Gestion du pseudo
 setPseudoBtn.onclick = () => {
   pseudo = pseudoInput.value.trim() || 'Anonyme';
   localStorage.setItem('pseudo', pseudo);
-  pseudoInput.disabled = true;
-  setPseudoBtn.disabled = true;
-  editPseudoBtn.disabled = false;
-  // Masquer le champ et le bouton OK après avoir choisi le pseudo
   pseudoContainer.style.display = 'none';
 };
 
@@ -73,6 +71,7 @@ editPseudoBtn.onclick = () => {
   pseudoInput.focus();
 };
 
+// Envoi des messages
 sendBtn.onclick = () => {
   const txt = msgInput.value.trim();
   if (txt && pseudo && ws && ws.readyState === WebSocket.OPEN) {
@@ -88,24 +87,23 @@ msgInput.addEventListener('keydown', (e) => {
   }
 });
 
+// Ajouter message dans le chat
 function addMessage(msg) {
   const div = document.createElement('div');
 
   let dateStr = '';
   if (msg.date) {
     const d = new Date(msg.date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2,'0');
+    const month = String(d.getMonth()+1).padStart(2,'0');
     const year = String(d.getFullYear()).slice(-2);
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2,'0');
+    const minutes = String(d.getMinutes()).padStart(2,'0');
     dateStr = ` [${day}\\${month}\\${year} ${hours}:${minutes}]`;
   }
 
-  div.innerHTML = `<strong>${escapeHTML(msg.pseudo)} :</strong> ${escapeHTML(msg.text)}${dateStr}`;
-
-  if (msg.pseudo === pseudo) div.classList.add('message-expediteur');
-
+  div.innerHTML = `<strong>${escapeHTML(msg.pseudo)} :</strong> ${escapeHTML(msg.text)}<span class="timestamp">${dateStr}</span>`;
+  if(msg.pseudo === pseudo) div.classList.add('message-expediteur');
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }

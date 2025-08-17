@@ -6,7 +6,7 @@
 <title>Chat Local</title>
 <style>
   html { 
-    height: calc(100% - 10px); 
+    height: 100%; 
     box-sizing: border-box;
   }
   body { 
@@ -24,12 +24,10 @@
     border: 1px solid #ccc; 
     background: url("background.jpg") no-repeat center center;
     background-size: cover;
-    height: 200px; 
     overflow-y: auto; 
     padding: 5px; 
-    margin-bottom: 10px; 
+    margin: 10px; 
     flex-grow: 1; 
-    margin-right: 15px; 
     font-size: 14px;
     color: #85e2d9;
   }
@@ -37,21 +35,10 @@
     padding: 5px; 
     margin: 2px 4px 2px 0; 
   }
-  #pseudo { 
-    width: 50%; 
-  }
-  #msg { 
-    width: 70%; 
-  }
-  .message-expediteur {
-    color: #06e5f5fd;
-    font-weight: bold;
-  }
-  .timestamp {
-    color: #2e89f1;
-    font-size: 11px;
-    margin-left: 6px;
-  }
+  #pseudo { width: 50%; }
+  #msg { width: 70%; }
+  .message-expediteur { color: #06e5f5fd; font-weight: bold; }
+  .timestamp { color: #2e89f1; font-size: 11px; margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -66,19 +53,10 @@
 
 <div id="chat"></div>
 
-<div>
+<div id="message-container">
   <input type="text" id="msg" placeholder="Votre message" />
   <button id="send">Envoyer</button>
 </div>
-
-<script>
-  // Masquer le champ et le bouton pseudo si l'utilisateur a déjà un pseudo
-  const pseudoContainer = document.getElementById('pseudo-container');
-  const pseudo = localStorage.getItem('pseudo') || '';
-  if (pseudo) {
-    pseudoContainer.style.display = 'none';
-  }
-</script>
 
 <script src="popup.js"></script>
 </body>
