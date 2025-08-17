@@ -5,19 +5,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Chat Local</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; width: 350px; background: #f4f4f4; }
-  #chat { border: 1px solid #ccc; background: white; height: 300px; overflow-y: auto; padding: 5px; margin-bottom: 10px; }
-  input, button { padding: 5px; margin: 2px 4px 2px 0; }
-  #pseudo { width: 50%; }
-  #msg { width: 70%; }
-  .message-expediteur { color: #40E0D0; font-weight: bold; }
+  body {
+    font-family: Arial, sans-serif;
+    padding: 15px;
+    width: 380px; 
+    height: 500px;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  h3 {
+    margin: 0;
+    text-align: center;
+  }
+
+  .row {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+  }
+
+  input, button {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  input {
+    flex: 1;
+  }
+
+  button {
+    min-width: 80px;
+    cursor: pointer;
+    background: #40E0D0;
+    color: white;
+    border: none;
+  }
+
+  button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+
+  #chat {
+    flex: 1;
+    border: 1px solid #ccc;
+    background: white;
+    overflow-y: auto;
+    padding: 5px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .message-expediteur {
+    color: #40E0D0;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
 <h3>💬 Chat Local</h3>
 
-<div>
+<div class="row">
   <input type="text" id="pseudo" placeholder="Pseudo" />
   <button id="setPseudo">OK</button>
   <button id="editPseudo" disabled>Modifier</button>
@@ -25,7 +80,7 @@
 
 <div id="chat"></div>
 
-<div>
+<div class="row">
   <input type="text" id="msg" placeholder="Votre message" />
   <button id="send">Envoyer</button>
 </div>
