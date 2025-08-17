@@ -24,9 +24,7 @@ function connectWS() {
   try {
     ws = new WebSocket(wsUrl);
 
-    ws.onopen = () => {
-      addMessage({ pseudo: 'Système', text: '✅ Connecté au serveur.' });
-    };
+    ws.onopen = () => addMessage({ pseudo: 'Système', text: '✅ Connecté au serveur.' });
 
     ws.onmessage = (event) => {
       try {
@@ -43,9 +41,7 @@ function connectWS() {
       reconnectTimeout = setTimeout(connectWS, 2000);
     };
 
-    ws.onerror = () => {
-      addMessage({ pseudo: 'Système', text: '❌ Impossible de se connecter.' });
-    };
+    ws.onerror = () => addMessage({ pseudo: 'Système', text: '❌ Impossible de se connecter.' });
 
   } catch (err) {
     addMessage({ pseudo: 'Système', text: '❌ Erreur de connexion : ' + err.message });
