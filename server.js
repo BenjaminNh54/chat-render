@@ -1,7 +1,7 @@
 // server.js
 const { createClient } = require('@supabase/supabase-js');
 const WebSocket = require('ws');
-const http = require('http');
+const https = require('https');
 
 // ===== CONFIG SUPABASE =====
 const supabaseUrl = 'https://osqzuptinfbahmfncjgl.supabase.co';
@@ -10,7 +10,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // ===========================
 
 // Créer un serveur HTTP basique
-const server = http.createServer((req, res) => {
+const server = https.createServer((req, res) => {
   res.writeHead(200);
   res.end("Serveur de chat en ligne via Render + Supabase");
 });
@@ -87,14 +87,14 @@ server.listen(PORT, () => {
   console.log(`Serveur WebSocket lancé sur le port ${PORT}`);
 });
 
-/*// ===== ANTI-SLEEP (Keep-Alive) =====
+// ===== ANTI-SLEEP (Keep-Alive) =====
 const RENDER_URL = "https://chat-i4wn.onrender.com"; // <-- remplace par ton URL publique Render
 
 setInterval(() => {
-  http.get(RENDER_URL, (res) => {
+  https.get(RENDER_URL, (res) => {
     console.log("Ping anti-sleep:", res.statusCode);
   }).on("error", (err) => {
     console.error("Erreur ping anti-sleep:", err.message);
   });
-}, 2 * 60 * 1000); // toutes les 2 minutes
-*/
+}, 5 * 60 * 1000); // toutes les 5 minutes
+
