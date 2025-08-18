@@ -87,7 +87,7 @@ server.listen(PORT, () => {
   console.log(`Serveur WebSocket lancé sur le port ${PORT}`);
 });
 
-// ===== ANTI-SLEEP (Keep-Alive) =====
+/*// ===== ANTI-SLEEP (Keep-Alive) =====
 const RENDER_URL = "https://chat-i4wn.onrender.com"; // <-- remplace par ton URL publique Render
 
 setInterval(() => {
@@ -97,3 +97,4 @@ setInterval(() => {
     console.error("Erreur ping anti-sleep:", err.message);
   });
 }, 2 * 60 * 1000); // toutes les 2 minutes
+*/
