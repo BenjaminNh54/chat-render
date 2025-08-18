@@ -1,6 +1,7 @@
 // server.js
 const { createClient } = require('@supabase/supabase-js');
 const WebSocket = require('ws');
+const http = require('http');
 const https = require('https');
 
 // ===== CONFIG SUPABASE =====
@@ -10,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // ===========================
 
 // Créer un serveur HTTP basique
-const server = https.createServer((req, res) => {
+const server = http.createServer((req, res) => {
   res.writeHead(200);
   res.end("Serveur de chat en ligne via Render + Supabase");
 });
