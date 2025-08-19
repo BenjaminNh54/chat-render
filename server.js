@@ -10,10 +10,41 @@ const supabaseKey = 'sb_secret_b4tZZmSvmT-vze7BvvNzhQ_zJFULUxt'; // ta clé
 const supabase = createClient(supabaseUrl, supabaseKey);
 // ===========================
 
-// Créer un serveur HTTP basique
-const server = http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end("Serveur de chat en ligne via Render + Supabase");
+// Créer un serveur HTTP basique avec gestion POST /user
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'POST' && req.url === '/user') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', async () => {
+      try {
+        const { name, password } = JSON.parse(body);
+        if (!name || !password) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Nom et mot de passe requis.' }));
+          return;
+        }
+        const { data, error } = await supabase
+          .from('users')
+          .insert([{ name, password }])
+          .select();
+        if (error) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+        } else {
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ user: data[0] }));
+        }
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Requête invalide.' }));
+      }
+    });
+  } else {
+    res.writeHead(200);
+    res.end("Serveur de chat en ligne via Render + Supabase");
+  }
 });
 
 // Créer le serveur WebSocket
